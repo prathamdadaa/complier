@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browser Code Compiler</title>
+  <!-- Load Pyodide for Python -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+  <!-- Load JSCPP for C++ -->
+  <script src="https://cdn.jsdelivr.net/npm/jscpp@2.0.8/dist/JSCPP.es5.min.js"></script>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #fff; }
+    textarea { width: 100%; height: 180px; background: #2d2d2d; color: #6a9fb5; border: 1px solid #444; padding: 10px; }
+    button { background: #007acc; color: white; border: none; padding: 10px 15px; cursor: pointer; margin-top: 10px; }
+    #output { background: #000; color: #00ff00; padding: 10px; border: 1px solid #444; min-height: 100px; margin-top: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+  <h3>Select Language</h3>
+  <select id="language">
+    <option value="python">Python</option>
+    <option value="cpp">C++</option>
+  </select>
+
+  <h3>Code Editor</h3>
+  <textarea id="code">print("Hello from Python!")</textarea>
+  <button onclick="runCode()">Run Code</button>
+
+  <h3>Console Output</h3>
+  <div id="output">Outputs will appear here...</div>
+
+  <script>
+    const codeArea = document.getElementById("code");
+    const langSelect = document.getElementById("language");
+    const outputDiv = document.getElementById("output");
+
+    // Default template code
+    langSelect.addEventListener("change", () => {
+      if (langSelect.value === "python") {
+        codeArea.value = 'print("Hello from Python!")';
+      } else {
+        codeArea.value = '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from C++!";\n    return 0;\n}';
+      }
+    });
+
+    let pyodideReady = false;
+    let pyodide;
+
+    async function loadPyodideEngine() {
+      outputDiv.innerText = "Loading Python engine...";
+      pyodide = await loadPyodide();
+      pyodideReady = true;
+      outputDiv.innerText = "Engine ready!";
+    }
+    loadPyodideEngine();
+
+    async function runCode() {
+      outputDiv.innerText = "Running...";
+      const code = codeArea.value;
+      const lang = langSelect.value;
+
+      if (lang === "python") {
+        if (!pyodideReady) {
+          outputDiv.innerText = "Python engine is still loading, please wait.";
+          return;
+        }
+        try {
+          // Redirect standard print output to JS
+          pyodide.runPython(`
+            import sys, io
+            sys.stdout = io.StringIO()
+          `);
+          await pyodide.runPythonAsync(code);
+          const stdout = pyodide.runPython("sys.stdout.getvalue()");
+          outputDiv.innerText = stdout || "Code executed successfully (no output).";
+        } catch (err) {
+          outputDiv.innerText = "Error:\n" + err;
+        }
+      } 
+      else if (lang === "cpp") {
+        try {
+          let outputText = "";
+          const config = {
+            stdio: {
+              write: function(s) { outputText += s; }
+            }
+          };
+          JSCPP.run(code, "", config);
+          outputDiv.innerText = outputText || "Code executed successfully (no output).";
+        } catch (err) {
+          outputDiv.innerText = "C++ Execution Error:\n" + err;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
