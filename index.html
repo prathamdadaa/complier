@@ -3,51 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DADA COMPILER</title>
+  <title>VS Code Web IDE</title>
   <link rel="stylesheet" href="styles.css">
   
-  <!-- Pyodide (Python WebAssembly) -->
+  <!-- Codicons (VS Code Icons) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons/dist/codicon.css">
+
+  <!-- Execution Engines -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-  <!-- JSCPP (C++ WebAssembly/Interpreter) -->
   <script src="https://cdn.jsdelivr.net/npm/jscpp@2.0.8/dist/JSCPP.es5.min.js"></script>
-  <!-- alasql (Browser SQL Engine) -->
   <script src="https://cdn.jsdelivr.net/npm/alasql@4"></script>
+
+  <!-- Monaco Editor CDN (VS Code Core Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
 </head>
 <body>
 
-  <header class="navbar">
-    <div class="logo">⚡ DADA COMPILER STUDIO </div>
-    <div class="controls">
-      <label for="language-select">Language:</label>
-      <select id="language-select">
-        <option value="python">Python 3</option>
-        <option value="cpp">C++ (STD 11)</option>
-        <option value="javascript">JavaScript (ES6)</option>
-        <option value="html">HTML & CSS</option>
-        <option value="sql">SQL (In-Memory)</option>
-        <option value="bash">Bash Scripting</option>
-      </select>
-      <button id="run-btn">▶ Run Code</button>
-    </div>
-  </header>
+  <div class="vscode-container">
+    <!-- Activity Bar (Far Left Icon Strip) -->
+    <aside class="activity-bar">
+      <div class="icon active" title="Explorer"><i class="codicon codicon-files"></i></div>
+      <div class="icon" title="Run & Debug"><i class="codicon codicon-run-all"></i></div>
+      <div class="icon" title="Settings"><i class="codicon codicon-settings-gear"></i></div>
+    </aside>
 
-  <main class="workspace">
-    <!-- Code Input Panel -->
-    <section class="panel editor-panel">
-      <div class="panel-header">
-        <span id="file-label">main.py</span>
-        <span id="status-tag" class="tag ready">System Ready</span>
+    <!-- Sidebar Explorer -->
+    <aside class="sidebar">
+      <div class="sidebar-title">EXPLORER</div>
+      <div class="file-tree">
+        <div class="file active" data-lang="python"><i class="codicon codicon-file-code"></i> main.py</div>
+        <div class="file" data-lang="cpp"><i class="codicon codicon-file-code"></i> main.cpp</div>
+        <div class="file" data-lang="javascript"><i class="codicon codicon-file-code"></i> app.js</div>
+        <div class="file" data-lang="html"><i class="codicon codicon-file-code"></i> index.html</div>
+        <div class="file" data-lang="sql"><i class="codicon codicon-database"></i> query.sql</div>
       </div>
-      <textarea id="code-editor" spellcheck="false"></textarea>
-    </section>
+    </aside>
 
-    <!-- Output Panel -->
-    <section class="panel output-panel">
-      <div class="panel-header">Output Console / Preview</div>
-      <div id="terminal-output" class="console"></div>
-      <iframe id="web-preview" class="hidden-preview"></iframe>
-    </section>
-  </main>
+    <!-- Main Workspace -->
+    <main class="editor-workspace">
+      <!-- Editor Header & Run Control -->
+      <div class="editor-tabs">
+        <div class="tab active">
+          <span id="current-tab-name">main.py</span>
+        </div>
+        <div class="tab-actions">
+          <button id="run-btn" title="Run Code (Ctrl+Enter)"><i class="codicon codicon-play"></i> Run Code</button>
+        </div>
+      </div>
+
+      <!-- Split Screen: Monaco Editor + Console -->
+      <div class="editor-body">
+        <div id="monaco-editor-container"></div>
+        <div class="terminal-panel">
+          <div class="terminal-header">
+            <span>TERMINAL / OUTPUT</span>
+            <button id="clear-btn"><i class="codicon codicon-clear-all"></i> Clear</button>
+          </div>
+          <div id="terminal-output" class="terminal-console">Ready to run code...</div>
+          <iframe id="web-preview" class="hidden-preview"></iframe>
+        </div>
+      </div>
+
+      <!-- VS Code Status Bar -->
+      <footer class="status-bar">
+        <div class="status-left">
+          <span id="status-engine"><i class="codicon codicon-sync spin"></i> Loading Engines...</span>
+        </div>
+        <div class="status-right">
+          <span id="status-lang">Python</span>
+          <span>UTF-8</span>
+          <span>Spaces: 4</span>
+        </div>
+      </footer>
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>
