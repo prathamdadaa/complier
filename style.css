@@ -1,0 +1,133 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar Header */
+.navbar {
+  height: 55px;
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #007acc;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+select {
+  background: #252526;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  border-radius: 4px;
+  outline: none;
+}
+
+#run-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#run-btn:hover {
+  background-color: #218838;
+}
+
+/* IDE Split Workbench */
+.workspace {
+  flex: 1;
+  display: flex;
+  gap: 2px;
+  background-color: #2d2d2d;
+  overflow: hidden;
+}
+
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+}
+
+.panel-header {
+  background-color: #252526;
+  padding: 8px 15px;
+  font-size: 0.85rem;
+  color: #aaa;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tag {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: #444;
+}
+
+.tag.ready { color: #5cb85c; }
+.tag.loading { color: #f0ad4e; }
+
+/* Textarea Code Editor */
+#code-editor {
+  flex: 1;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  border: none;
+  padding: 15px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+}
+
+/* Console & Preview Displays */
+.console {
+  flex: 1;
+  background-color: #000;
+  color: #00ff66;
+  font-family: 'Consolas', 'Courier New', monospace;
+  padding: 15px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+}
+
+#web-preview {
+  flex: 1;
+  border: none;
+  background-color: #ffffff;
+}
+
+.hidden-preview {
+  display: none;
+}
