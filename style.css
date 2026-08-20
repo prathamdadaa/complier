@@ -5,6 +5,7 @@
   --paper:#f3ede0;
   --mustard:#e8b93a;
   --dada-red:#e94f37;
+  --dada-blue:#4fb0e9;
   --line:#2c2c30;
   --text:#e9e6df;
   --text-dim:#8c8a86;
@@ -22,6 +23,7 @@ body{
   flex-direction:column;
   overflow:hidden;
 }
+.hidden{ display:none !important; }
 
 /* ---------- HEADER : the Dada collage stamp ---------- */
 header{
@@ -29,12 +31,13 @@ header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:16px;
+  gap:14px;
   padding:10px 20px;
   background:var(--panel-2);
   border-bottom:1px solid var(--line);
   flex-shrink:0;
   z-index:5;
+  flex-wrap:wrap;
 }
 .brand{
   display:flex;
@@ -69,12 +72,51 @@ header{
   font-size:12px;
   color:var(--text-dim);
   letter-spacing:.3px;
-  max-width:260px;
+  max-width:230px;
   display:none;
 }
-@media(min-width:820px){ .tagline{display:block;} }
+@media(min-width:1000px){ .tagline{display:block;} }
+
+/* ---------- MODE TOGGLE ---------- */
+.mode-toggle{
+  display:flex;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:3px;
+  gap:2px;
+}
+.mode-btn{
+  background:transparent;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--mono);
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.4px;
+  padding:7px 14px;
+  border-radius:3px;
+  cursor:pointer;
+}
+.mode-btn.active{
+  background:var(--mustard);
+  color:var(--ink);
+}
 
 .actions{ display:flex; align-items:center; gap:10px; }
+
+.lang-select{
+  font-family:var(--mono);
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:.3px;
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:9px 10px;
+  cursor:pointer;
+}
 
 button{
   font-family:var(--mono);
@@ -87,6 +129,7 @@ button{
   transition:transform .12s ease, box-shadow .12s ease;
 }
 button:active{ transform:translateY(1px); }
+button:disabled{ opacity:.5; cursor:wait; }
 
 #runBtn{
   background:var(--mustard);
@@ -126,6 +169,7 @@ button:active{ transform:translateY(1px); }
 .tab.html{ --dot:#e8b93a; }
 .tab.css{ --dot:#4fb0e9; }
 .tab.js{ --dot:#e94f37; }
+.tab.prog{ --dot:#6bbf6b; cursor:default; }
 .tab::before{
   content:'';
   display:inline-block;
@@ -198,7 +242,41 @@ iframe#preview{
   background:#fff;
 }
 
-/* ---------- CONSOLE ---------- */
+/* ---------- PROGRAM MODE STDIN ---------- */
+.program-output{
+  flex:1;
+  overflow:auto;
+  padding:14px;
+  background:var(--paper);
+  display:flex;
+  flex-direction:column;
+}
+.stdin-row{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  height:100%;
+}
+.stdin-row label{
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#6b675f;
+  font-weight:700;
+}
+#stdinBox{
+  flex:1;
+  resize:none;
+  font-family:var(--mono);
+  font-size:13px;
+  padding:10px;
+  border:2px solid var(--ink);
+  background:#fff;
+  color:var(--ink);
+  min-height:80px;
+}
+
+/* ---------- CONSOLE / OUTPUT ---------- */
 .console{
   height:150px;
   flex-shrink:0;
@@ -237,6 +315,7 @@ iframe#preview{
 .console-line.error{ color:var(--dada-red); }
 .console-line.warn{ color:var(--mustard); }
 .console-line.log{ color:var(--text); }
+.console-line.info{ color:var(--dada-blue); }
 .console-empty{ color:var(--text-dim); font-style:italic; }
 .clear-console{
   background:transparent;
