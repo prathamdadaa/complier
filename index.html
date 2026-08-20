@@ -4,80 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VS Code Web IDE</title>
-  <link rel="stylesheet" href="styles.css">
-  
+
   <!-- Codicons (VS Code Icons) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@vscode/codicons/dist/codicon.css">
 
-  <!-- Execution Engines -->
+  <!-- CodeMirror (Editor Engine & Themes) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+  
+  <!-- CodeMirror Mode Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/sql/sql.min.js"></script>
+
+  <!-- Language Execution Engines -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jscpp@2.0.8/dist/JSCPP.es5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/alasql@4"></script>
 
-  <!-- Monaco Editor CDN (VS Code Core Engine) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <div class="vscode-container">
-    <!-- Activity Bar (Far Left Icon Strip) -->
+    <!-- Activity Bar -->
     <aside class="activity-bar">
-      <div class="icon active" title="Explorer"><i class="codicon codicon-files"></i></div>
-      <div class="icon" title="Run & Debug"><i class="codicon codicon-run-all"></i></div>
-      <div class="icon" title="Settings"><i class="codicon codicon-settings-gear"></i></div>
+      <div class="icon active"><i class="codicon codicon-files"></i></div>
+      <div class="icon"><i class="codicon codicon-run-all"></i></div>
     </aside>
 
     <!-- Sidebar Explorer -->
     <aside class="sidebar">
       <div class="sidebar-title">EXPLORER</div>
       <div class="file-tree">
-        <div class="file active" data-lang="python"><i class="codicon codicon-file-code"></i> main.py</div>
-        <div class="file" data-lang="cpp"><i class="codicon codicon-file-code"></i> main.cpp</div>
-        <div class="file" data-lang="javascript"><i class="codicon codicon-file-code"></i> app.js</div>
-        <div class="file" data-lang="html"><i class="codicon codicon-file-code"></i> index.html</div>
-        <div class="file" data-lang="sql"><i class="codicon codicon-database"></i> query.sql</div>
+        <div class="file active" data-lang="python" data-mode="python"><i class="codicon codicon-file-code"></i> main.py</div>
+        <div class="file" data-lang="cpp" data-mode="text/x-c++src"><i class="codicon codicon-file-code"></i> main.cpp</div>
+        <div class="file" data-lang="javascript" data-mode="javascript"><i class="codicon codicon-file-code"></i> app.js</div>
+        <div class="file" data-lang="html" data-mode="xml"><i class="codicon codicon-file-code"></i> index.html</div>
+        <div class="file" data-lang="sql" data-mode="text/x-sql"><i class="codicon codicon-database"></i> query.sql</div>
       </div>
     </aside>
 
-    <!-- Main Workspace -->
+    <!-- Main Editor Workspace -->
     <main class="editor-workspace">
-      <!-- Editor Header & Run Control -->
       <div class="editor-tabs">
-        <div class="tab active">
-          <span id="current-tab-name">main.py</span>
-        </div>
-        <div class="tab-actions">
-          <button id="run-btn" title="Run Code (Ctrl+Enter)"><i class="codicon codicon-play"></i> Run Code</button>
-        </div>
+        <div class="tab"><span id="current-tab-name">main.py</span></div>
+        <button id="run-btn"><i class="codicon codicon-play"></i> Run Code</button>
       </div>
 
-      <!-- Split Screen: Monaco Editor + Console -->
       <div class="editor-body">
-        <div id="monaco-editor-container"></div>
+        <textarea id="code-editor"></textarea>
+        
         <div class="terminal-panel">
           <div class="terminal-header">
             <span>TERMINAL / OUTPUT</span>
-            <button id="clear-btn"><i class="codicon codicon-clear-all"></i> Clear</button>
+            <button id="clear-btn">Clear</button>
           </div>
-          <div id="terminal-output" class="terminal-console">Ready to run code...</div>
-          <iframe id="web-preview" class="hidden-preview"></iframe>
+          <div id="terminal-output" class="terminal-console">Initializing engines...</div>
+          <iframe id="web-preview"></iframe>
         </div>
       </div>
 
-      <!-- VS Code Status Bar -->
+      <!-- Status Footer -->
       <footer class="status-bar">
-        <div class="status-left">
-          <span id="status-engine"><i class="codicon codicon-sync spin"></i> Loading Engines...</span>
-        </div>
-        <div class="status-right">
-          <span id="status-lang">Python</span>
-          <span>UTF-8</span>
-          <span>Spaces: 4</span>
-        </div>
+        <span id="status-engine">Loading Python Engine...</span>
+        <span id="status-lang">PYTHON</span>
       </footer>
     </main>
   </div>
 
+  <!-- Custom App Logic -->
   <script src="app.js"></script>
 </body>
 </html>
