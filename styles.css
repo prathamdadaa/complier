@@ -1,133 +1,177 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #121212;
-  color: #e0e0e0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Navbar Header */
-.navbar {
-  height: 55px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: #1e1e1e;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.logo {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #007acc;
-}
-
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-select {
-  background: #252526;
-  color: #fff;
-  border: 1px solid #444;
-  padding: 6px 12px;
-  border-radius: 4px;
-  outline: none;
-}
-
-#run-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 7px 18px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-#run-btn:hover {
-  background-color: #218838;
-}
-
-/* IDE Split Workbench */
-.workspace {
-  flex: 1;
-  display: flex;
-  gap: 2px;
-  background-color: #2d2d2d;
+  color: #cccccc;
+  height: 100vh;
   overflow: hidden;
 }
 
-.panel {
+.vscode-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Activity Bar */
+.activity-bar {
+  width: 48px;
+  background-color: #333333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.activity-bar .icon {
+  font-size: 20px;
+  color: #858585;
+  padding: 12px 0;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.activity-bar .icon.active, .activity-bar .icon:hover {
+  color: #ffffff;
+  border-left: 2px solid #007acc;
+}
+
+/* Sidebar File Explorer */
+.sidebar {
+  width: 200px;
+  background-color: #252526;
+  border-right: 1px solid #1e1e1e;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 10px;
+  color: #6f6f6f;
+  letter-spacing: 0.5px;
+}
+
+.file-tree .file {
+  padding: 6px 15px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #969696;
+}
+
+.file-tree .file:hover { background-color: #2a2d2e; }
+.file-tree .file.active { background-color: #37373d; color: #ffffff; }
+
+/* Workspace & Monaco Engine */
+.editor-workspace {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #1e1e1e;
 }
 
-.panel-header {
+.editor-tabs {
+  height: 35px;
   background-color: #252526;
-  padding: 8px 15px;
-  font-size: 0.85rem;
-  color: #aaa;
-  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 10px;
+}
+
+.tab {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 8px 16px;
+  font-size: 13px;
+  border-top: 1px solid #007acc;
+  display: flex;
+  align-items: center;
+}
+
+#run-btn {
+  background: #0e639c;
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  font-size: 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#run-btn:hover { background: #1177bb; }
+
+.editor-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#monaco-editor-container {
+  flex: 6;
+  width: 100%;
+}
+
+/* Terminal Area */
+.terminal-panel {
+  flex: 4;
+  background-color: #1e1e1e;
+  border-top: 1px solid #2d2d2d;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  background: #252526;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: bold;
   display: flex;
   justify-content: space-between;
 }
 
-.tag {
-  font-size: 0.75rem;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background-color: #444;
-}
-
-.tag.ready { color: #5cb85c; }
-.tag.loading { color: #f0ad4e; }
-
-/* Textarea Code Editor */
-#code-editor {
-  flex: 1;
-  background-color: #1e1e1e;
-  color: #d4d4d4;
+#clear-btn {
+  background: none;
   border: none;
-  padding: 15px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  resize: none;
-  outline: none;
+  color: #cccccc;
+  cursor: pointer;
 }
 
-/* Console & Preview Displays */
-.console {
+.terminal-console {
   flex: 1;
-  background-color: #000;
-  color: #00ff66;
+  padding: 10px;
   font-family: 'Consolas', 'Courier New', monospace;
-  padding: 15px;
+  font-size: 13px;
+  color: #cccccc;
   overflow-y: auto;
   white-space: pre-wrap;
-  font-size: 0.9rem;
+  background-color: #181818;
 }
 
 #web-preview {
   flex: 1;
   border: none;
-  background-color: #ffffff;
+  background: #ffffff;
 }
 
-.hidden-preview {
-  display: none;
+.hidden-preview { display: none; }
+
+/* Status Bar */
+.status-bar {
+  height: 22px;
+  background-color: #007acc;
+  color: #ffffff;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
 }
+
+.status-left, .status-right { display: flex; gap: 15px; }
