@@ -1,179 +1,113 @@
-// Default Boilerplate Code Templates
-const codeTemplates = {
-  python: `# Python 3 Engine\nnumbers = [1, 2, 3, 4, 5]\nsquares = [x**2 for x in numbers]\nprint(f"Computed Squares: {squares}")`,
-  
-  cpp: `// C++ Standard Interpreter\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from Browser C++!" << endl;\n    return 0;\n}`,
-  
-  javascript: `// Native JavaScript ES6 Engine\nconst data = [10, 20, 30];\nconst sum = data.reduce((a, b) => a + b, 0);\nconsole.log("Calculated Sum:", sum);`,
-  
-  html: `<!-- HTML/CSS Live Renderer -->\n<div style="text-align: center; padding: 20px;">\n  <h1 style="color: #007acc;">Interactive UI</h1>\n  <p>Rendered directly inside an iframe sandbox.</p>\n</div>`,
-  
-  sql: `-- Browser In-Memory SQL\nCREATE TABLE Users (id INT, name STRING);\nINSERT INTO Users VALUES (1, 'Alice'), (2, 'Bob');\nSELECT * FROM Users WHERE id = 1;`,
-  
-  bash: `# Simulating Bash Commands\necho "Initializing system script..."\ndate\necho "Process Complete."`
-};
-
-const extensions = {
-  python: 'main.py',
-  cpp: 'main.cpp',
-  javascript: 'app.js',
-  html: 'index.html',
-  sql: 'query.sql',
-  bash: 'script.sh'
-};
-
-// UI Elements
-const editor = document.getElementById('code-editor');
-const langSelect = document.getElementById('language-select');
-const consoleOutput = document.getElementById('terminal-output');
-const iframePreview = document.getElementById('web-preview');
-const fileLabel = document.getElementById('file-label');
-const statusTag = document.getElementById('status-tag');
-const runBtn = document.getElementById('run-btn');
-
-// System Engines Initialization
+let editor;
+let currentLanguage = 'python';
 let pyodideInstance = null;
 
-async function initEngines() {
-  statusTag.textContent = 'Loading Python...';
-  statusTag.className = 'tag loading';
+// Boilerplate Code
+const files = {
+  python: { name: 'main.py', lang: 'python', code: `# VS Code Web - Python\nnumbers = [1, 2, 3, 4, 5]\nprint(f"Squares: {[x**2 for x in numbers]}")` },
+  cpp: { name: 'main.cpp', lang: 'cpp', code: `// VS Code Web - C++\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello from VS Code C++ Engine!" << endl;\n    return 0;\n}` },
+  javascript: { name: 'app.js', lang: 'javascript', code: `// VS Code Web - JavaScript\nconst items = ['VS Code', 'Monaco', 'WebAssembly'];\nconsole.log("Components:", items.join(', '));` },
+  html: { name: 'index.html', lang: 'html', code: `<!-- VS Code Web - Live Preview -->\n<h1 style="color: #007acc; font-family: sans-serif;">Hello VS Code!</h1>` },
+  sql: { name: 'query.sql', lang: 'sql', code: `-- In-Memory SQL Query\nCREATE TABLE Users (id INT, name STRING);\nINSERT INTO Users VALUES (1, 'Alice'), (2, 'Bob');\nSELECT * FROM Users;` }
+};
+
+// Initialize Monaco Editor Engine
+require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' }});
+require(['vs/editor/editor.main'], function() {
+  editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+    value: files.python.code,
+    language: 'python',
+    theme: 'vs-dark',
+    automaticLayout: true,
+    fontSize: 14,
+    minimap: { enabled: true },
+    scrollBeyondLastLine: false,
+    cursorBlinking: 'smooth'
+  });
+});
+
+// Load Pyodide Engine
+async function initPyodide() {
   try {
     pyodideInstance = await loadPyodide();
-    statusTag.textContent = 'System Ready';
-    statusTag.className = 'tag ready';
+    document.getElementById('status-engine').innerHTML = '<i class="codicon codicon-check"></i> Python Engine Ready';
   } catch (err) {
-    statusTag.textContent = 'Engine Load Error';
+    document.getElementById('status-engine').innerText = 'Engine Error';
   }
 }
-initEngines();
+initPyodide();
 
-// Switch Code View & File Extensions
-langSelect.addEventListener('change', () => {
-  const lang = langSelect.value;
-  editor.value = codeTemplates[lang];
-  fileLabel.textContent = extensions[lang];
-  
-  if (lang === 'html') {
-    consoleOutput.style.display = 'none';
-    iframePreview.style.display = 'block';
-  } else {
-    consoleOutput.style.display = 'block';
-    iframePreview.style.display = 'none';
-  }
-});
+// Switch Files in Explorer
+document.querySelectorAll('.file-tree .file').forEach(fileEl => {
+  fileEl.addEventListener('click', () => {
+    document.querySelectorAll('.file-tree .file').forEach(f => f.classList.remove('active'));
+    fileEl.classList.add('active');
 
-// Default Load Setup
-editor.value = codeTemplates.python;
+    currentLanguage = fileEl.dataset.lang;
+    const fileData = files[currentLanguage];
 
-// Execution Router
-runBtn.addEventListener('click', async () => {
-  const lang = langSelect.value;
-  const code = editor.value;
-  consoleOutput.textContent = 'Running...';
+    document.getElementById('current-tab-name').innerText = fileData.name;
+    document.getElementById('status-lang').innerText = fileData.lang.toUpperCase();
 
-  switch (lang) {
-    case 'python':
-      runPython(code);
-      break;
-    case 'cpp':
-      runCpp(code);
-      break;
-    case 'javascript':
-      runJavaScript(code);
-      break;
-    case 'html':
-      runHTML(code);
-      break;
-    case 'sql':
-      runSQL(code);
-      break;
-    case 'bash':
-      runBash(code);
-      break;
-  }
-});
+    // Change Monaco Language Model
+    monaco.editor.setModelLanguage(editor.getModel(), fileData.lang === 'cpp' ? 'cpp' : fileData.lang);
+    editor.setValue(fileData.code);
 
-// Language Runners
-async function runPython(code) {
-  if (!pyodideInstance) {
-    consoleOutput.textContent = 'Python engine is still initializing...';
-    return;
-  }
-  try {
-    pyodideInstance.runPython(`
-      import sys, io
-      sys.stdout = io.StringIO()
-    `);
-    await pyodideInstance.runPythonAsync(code);
-    const stdout = pyodideInstance.runPython('sys.stdout.getvalue()');
-    consoleOutput.textContent = stdout || 'Code executed successfully (no stdout).';
-  } catch (err) {
-    consoleOutput.textContent = `Python Runtime Error:\n${err.message}`;
-  }
-}
-
-function runCpp(code) {
-  try {
-    let outputText = '';
-    const config = {
-      stdio: {
-        write: (s) => { outputText += s; }
-      }
-    };
-    JSCPP.run(code, '', config);
-    consoleOutput.textContent = outputText || 'Code executed with no output.';
-  } catch (err) {
-    consoleOutput.textContent = `C++ Execution Error:\n${err}`;
-  }
-}
-
-function runJavaScript(code) {
-  try {
-    let logs = [];
-    const customConsole = {
-      log: (...args) => logs.push(args.join(' ')),
-      error: (...args) => logs.push('Error: ' + args.join(' ')),
-      warn: (...args) => logs.push('Warning: ' + args.join(' '))
-    };
-    
-    // Scoped Execution
-    const runInScope = new Function('console', code);
-    runInScope(customConsole);
-    
-    consoleOutput.textContent = logs.join('\n') || 'Executed successfully (no console outputs).';
-  } catch (err) {
-    consoleOutput.textContent = `JS Runtime Error:\n${err.message}`;
-  }
-}
-
-function runHTML(code) {
-  iframePreview.srcdoc = code;
-}
-
-function runSQL(code) {
-  try {
-    const res = alasql(code);
-    consoleOutput.textContent = JSON.stringify(res, null, 2);
-  } catch (err) {
-    consoleOutput.textContent = `SQL Query Error:\n${err.message}`;
-  }
-}
-
-function runBash(code) {
-  // Simple Bash/Shell Simulator for basic echo/date calls
-  const lines = code.split('\n');
-  let output = [];
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('echo ')) {
-      output.push(trimmed.substring(5).replace(/['"]/g, ''));
-    } else if (trimmed === 'date') {
-      output.push(new Date().toString());
-    } else if (trimmed.startsWith('#') || trimmed === '') {
-      // Ignore comments and blank lines
+    // Toggle Preview Panel for HTML
+    const consoleOutput = document.getElementById('terminal-output');
+    const iframePreview = document.getElementById('web-preview');
+    if (currentLanguage === 'html') {
+      consoleOutput.style.display = 'none';
+      iframePreview.style.display = 'block';
     } else {
-      output.push(`bash: ${trimmed}: command not recognized in browser environment`);
+      consoleOutput.style.display = 'block';
+      iframePreview.style.display = 'none';
     }
   });
-  consoleOutput.textContent = output.join('\n');
+});
+
+// Execution Logic
+document.getElementById('run-btn').addEventListener('click', executeCode);
+
+async function executeCode() {
+  const code = editor.getValue();
+  const consoleOutput = document.getElementById('terminal-output');
+  consoleOutput.innerText = 'Executing...\n';
+
+  if (currentLanguage === 'python') {
+    if (!pyodideInstance) return consoleOutput.innerText = 'Python Engine loading...';
+    try {
+      pyodideInstance.runPython(`import sys, io; sys.stdout = io.StringIO()`);
+      await pyodideInstance.runPythonAsync(code);
+      consoleOutput.innerText = pyodideInstance.runPython('sys.stdout.getvalue()') || 'Executed with no output.';
+    } catch (err) { consoleOutput.innerText = `Error:\n${err.message}`; }
+  } 
+  else if (currentLanguage === 'cpp') {
+    try {
+      let out = '';
+      JSCPP.run(code, '', { stdio: { write: s => out += s } });
+      consoleOutput.innerText = out || 'Executed with no output.';
+    } catch (err) { consoleOutput.innerText = `C++ Error:\n${err}`; }
+  } 
+  else if (currentLanguage === 'javascript') {
+    try {
+      let logs = [];
+      const customConsole = { log: (...a) => logs.push(a.join(' ')) };
+      new Function('console', code)(customConsole);
+      consoleOutput.innerText = logs.join('\n') || 'Executed with no output.';
+    } catch (err) { consoleOutput.innerText = `JS Error:\n${err.message}`; }
+  } 
+  else if (currentLanguage === 'html') {
+    document.getElementById('web-preview').srcdoc = code;
+  } 
+  else if (currentLanguage === 'sql') {
+    try {
+      consoleOutput.innerText = JSON.stringify(alasql(code), null, 2);
+    } catch (err) { consoleOutput.innerText = `SQL Error:\n${err.message}`; }
+  }
 }
+
+// Clear Console
+document.getElementById('clear-btn').addEventListener('click', () => {
+  document.getElementById('terminal-output').innerText = '';
+});
