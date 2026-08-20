@@ -20,40 +20,68 @@
       <span class="d1">DA</span><span class="d2">DA</span>
       <span class="rest">CODE · COMPILER</span>
     </div>
-    <div class="tagline">cut-up type, disciplined runtime — an in-browser HTML/CSS/JS playground</div>
+    <div class="tagline">cut-up type, disciplined runtime — a browser code playground</div>
   </div>
+
+  <div class="mode-toggle" id="modeToggle">
+    <button class="mode-btn active" data-mode="web">🌐 Web</button>
+    <button class="mode-btn" data-mode="program">⚙ Program</button>
+  </div>
+
   <div class="actions">
+    <select id="langSelect" class="lang-select hidden">
+      <option value="python">Python 3</option>
+      <option value="cpp">C++ (GCC)</option>
+      <option value="csharp">C# (Mono)</option>
+    </select>
     <button id="runBtn" title="Run (Ctrl/Cmd + Enter)">▶ Run</button>
     <button class="ghost-btn" id="resetBtn">Reset</button>
   </div>
 </header>
 
-<div class="tabbar">
+<!-- ===== WEB MODE ===== -->
+<div class="tabbar" id="webTabbar">
   <div class="tab html active" data-lang="html">index.html</div>
   <div class="tab css" data-lang="css">style.css</div>
   <div class="tab js" data-lang="js">script.js</div>
 </div>
 
+<!-- ===== PROGRAM MODE ===== -->
+<div class="tabbar hidden" id="programTabbar">
+  <div class="tab prog active" id="progTabLabel">main.py</div>
+</div>
+
 <main>
   <div class="editor-pane">
     <div class="cm-wrap">
+      <!-- web mode slots -->
       <div class="editor-slot active" id="slot-html"></div>
       <div class="editor-slot" id="slot-css"></div>
       <div class="editor-slot" id="slot-js"></div>
+      <!-- program mode slot -->
+      <div class="editor-slot" id="slot-program"></div>
     </div>
   </div>
 
   <div class="preview-pane">
-    <div class="preview-bar">
+    <div class="preview-bar" id="previewBar">
       <div class="dots"><span></span><span></span><span></span></div>
-      <span>live preview</span>
+      <span id="previewLabel">live preview</span>
       <span></span>
     </div>
+
     <iframe id="preview" title="preview" sandbox="allow-scripts allow-modals"></iframe>
+
+    <div class="program-output hidden" id="programOutput">
+      <div class="stdin-row">
+        <label for="stdinBox">stdin (optional)</label>
+        <textarea id="stdinBox" placeholder="Input passed to your program, one value per line…"></textarea>
+      </div>
+    </div>
 
     <div class="console" id="console">
       <div class="console-bar" id="consoleToggle">
-        <div class="left"><span class="caret">▾</span><span>Console</span></div>
+        <div class="left"><span class="caret">▾</span><span id="consoleTitle">Console</span></div>
         <button class="clear-console" id="clearConsole">clear</button>
       </div>
       <div class="console-body" id="consoleBody">
@@ -68,6 +96,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
 
 <script src="script.js"></script>
 </body>
